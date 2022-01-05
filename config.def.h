@@ -5,10 +5,11 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+static char *font = "JetBrainsMono:pixelsize=14:antialias=true:autohint=true";
 #if FONT2_PATCH
 /* Spare fonts */
 static char *font2[] = {
+   "JoyPixels:pixelsize=14:antialias=true:autohint=true"
 /*	"Inconsolata for Powerline:pixelsize=12:antialias=true:autohint=true", */
 /*	"Hack Nerd Font Mono:pixelsize=11:antialias=true:autohint=true", */
 };
@@ -75,7 +76,7 @@ int allowwindowops = 0;
  * near minlatency, but it waits longer for slow updates to avoid partial draw.
  * low minlatency will tear/flicker more, as it can "detect" idle too early.
  */
-static double minlatency = 8;
+static double minlatency = 4;
 static double maxlatency = 33;
 
 #if SYNC_PATCH
@@ -152,32 +153,31 @@ float alphaUnfocused = 0.6;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"black",
-	"red3",
-	"green3",
-	"yellow3",
-	"blue2",
-	"magenta3",
-	"cyan3",
-	"gray90",
+	"#1c1f24",
+	"#ff6c6b",
+	"#98be65",
+	"#da8548",
+	"#51afef",
+	"#c678dd",
+	"#5699af",
+	"#202328",
 
 	/* 8 bright colors */
-	"gray50",
-	"red",
-	"green",
-	"yellow",
-	"#5c5cff",
-	"magenta",
-	"cyan",
-	"white",
+	"#5b6268",
+	"#da8548",
+	"#4db5bd",
+	"#ecbe7b",
+	"#3071db",
+	"#a9a1e1",
+	"#46d9ff",
+	"#dfdfdf",
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#add8e6", /* 256 -> cursor */
-	"#555555", /* 257 -> rev cursor*/
-	"#000000", /* 258 -> bg */
-	"#e5e5e5", /* 259 -> fg */
+	"#282c34",
+	"#bbc2cf",
+	"#d7d7d7",
 };
 
 
@@ -189,11 +189,11 @@ static const char *colorname[] = {
 unsigned int defaultbg = 0;
 unsigned int bg = 17, bgUnfocused = 16;
 #else
-unsigned int defaultbg = 258;
+unsigned int defaultbg = 256;
 #endif // ALPHA_FOCUS_HIGHLIGHT_PATCH
-unsigned int defaultfg = 259;
-unsigned int defaultcs = 256;
-unsigned int defaultrcs = 257;
+unsigned int defaultfg = 257;
+unsigned int defaultcs = 15;
+unsigned int defaultrcs = 15;
 
 #if VIM_BROWSE_PATCH
 unsigned int const currentBg = 6, buffSize = 2048;
@@ -333,13 +333,13 @@ static MouseShortcut mshortcuts[] = {
 	/* mask                 button   function        argument       release */
 	#endif // UNIVERSCROLL_PATCH
 	#if CLIPBOARD_PATCH
-	{ XK_ANY_MOD,           Button2, clippaste,      {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button3, clippaste,      {.i = 0},      1 },
 	#else
-	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button3, selpaste,       {.i = 0},      1 },
 	#endif // CLIPBOARD_PATCH
 	#if SCROLLBACK_MOUSE_PATCH
-	{ ShiftMask,            Button4, kscrollup,      {.i = 1} },
-	{ ShiftMask,            Button5, kscrolldown,    {.i = 1} },
+   { XK_ANY_MOD,           Button4, kscrollup,      {.i = 3},      0},
+	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = 3},      0},
 	#elif UNIVERSCROLL_PATCH
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\033[5;2~"}, 0, -1 },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\033[6;2~"}, 0, -1 },
@@ -348,8 +348,8 @@ static MouseShortcut mshortcuts[] = {
 	{ ShiftMask,            Button5, ttysend,        {.s = "\033[6;2~"} },
 	#endif // SCROLLBACK_MOUSE_PATCH
 	#if SCROLLBACK_MOUSE_ALTSCREEN_PATCH
-	{ XK_NO_MOD,            Button4, kscrollup,      {.i = 1} },
-	{ XK_NO_MOD,            Button5, kscrolldown,    {.i = 1} },
+   { XK_ANY_MOD,           Button4, kscrollup,      {.i = 3},      0},
+	{ XK_ANY_MOD,           Button5, kscrolldown,    {.i = 3},      0},
 	#else
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
@@ -360,9 +360,9 @@ static MouseShortcut mshortcuts[] = {
 static MouseShortcut maltshortcuts[] = {
 	/* mask                 button   function        argument       release */
 	#if CLIPBOARD_PATCH
-	{ XK_ANY_MOD,           Button2, clippaste,      {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button3, clippaste,      {.i = 0},      1 },
 	#else
-	{ XK_ANY_MOD,           Button2, selpaste,       {.i = 0},      1 },
+	{ XK_ANY_MOD,           Button3, selpaste,       {.i = 0},      1 },
 	#endif // CLIPBOARD_PATCH
 	{ XK_ANY_MOD,           Button4, ttysend,        {.s = "\031"} },
 	{ XK_ANY_MOD,           Button5, ttysend,        {.s = "\005"} },
@@ -381,13 +381,13 @@ static char *openurlcmd[] = { "/bin/sh", "-c",
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function         argument */
-	{ XK_ANY_MOD,           XK_Break,       sendbreak,       {.i =  0} },
-	{ ControlMask,          XK_Print,       toggleprinter,   {.i =  0} },
-	{ ShiftMask,            XK_Print,       printscreen,     {.i =  0} },
-	{ XK_ANY_MOD,           XK_Print,       printsel,        {.i =  0} },
-	{ TERMMOD,              XK_Prior,       zoom,            {.f = +1} },
-	{ TERMMOD,              XK_Next,        zoom,            {.f = -1} },
-	{ TERMMOD,              XK_Home,        zoomreset,       {.f =  0} },
+	/* { XK_ANY_MOD,           XK_Break,       sendbreak,       {.i =  0} }, */
+	/* { ControlMask,          XK_Print,       toggleprinter,   {.i =  0} }, */
+	/* { ShiftMask,            XK_Print,       printscreen,     {.i =  0} }, */
+	/* { XK_ANY_MOD,           XK_Print,       printsel,        {.i =  0} }, */
+	{ TERMMOD,              XK_K,       zoom,            {.f = +1} },
+	{ TERMMOD,              XK_J,        zoom,            {.f = -1} },
+	{ TERMMOD,              XK_U,        zoomreset,       {.f =  0} },
 	{ TERMMOD,              XK_C,           clipcopy,        {.i =  0} },
 	{ TERMMOD,              XK_V,           clippaste,       {.i =  0} },
 	#if SCROLLBACK_PATCH
